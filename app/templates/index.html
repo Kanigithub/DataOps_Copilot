@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlowCraft AI | Pipeline Builder</title>
+  <link rel="stylesheet" href="/static/css/app.css" />
+</head>
+
+<body>
+<div class="app">
+
+  <!-- ═══════════════════════════════════════════
+       SIDEBAR
+  ═══════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand__logo"><div class="logoMark"></div></div>
+      <div class="brand__text">
+        <div class="brand__name">FlowCraft AI</div>
+        <div class="brand__sub">ETL/ELT Studio</div>
+      </div>
+      <button class="iconBtn iconBtn--ghost" title="Menu">&#9776;</button>
+    </div>
+
+    <nav class="nav">
+      <a class="nav__item nav__item--active" href="#">
+        <span class="nav__icon">&#8962;</span> Dashboard
+      </a>
+      <a class="nav__item" href="#"><span class="nav__icon">&#9096;</span> Pipelines</a>
+      <a class="nav__item" href="#"><span class="nav__icon">&#9654;</span> Runs</a>
+      <a class="nav__item" href="#"><span class="nav__icon">&#9638;</span> Artifacts</a>
+      <a class="nav__item" href="#"><span class="nav__icon">&#129302;</span> Agents</a>
+      <a class="nav__item" href="#"><span class="nav__icon">&#10003;</span> Approvals</a>
+      <a class="nav__item" href="#"><span class="nav__icon">&#128738;</span> Data Sources</a>
+      <a class="nav__item" href="#"><span class="nav__icon">&#128279;</span> Connections</a>
+      <a class="nav__item" href="#"><span class="nav__icon">&#9881;</span> Settings</a>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <div class="envCard">
+        <div class="envCard__label">Environment</div>
+        <div class="envCard__row">
+          <span class="dot dot--green"></span>
+          <span>Azure</span>
+        </div>
+      </div>
+      <div class="userCard">
+        <div class="avatar">KS</div>
+        <div class="userCard__meta">
+          <div class="userCard__name">Kanimozhi Sankar</div>
+          <div class="userCard__role">Admin</div>
+        </div>
+        <span class="chev">&#8250;</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════════════════════════
+       MAIN
+  ═══════════════════════════════════════════ -->
+  <main class="main">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <div class="pageTitle">Pipeline Builder</div>
+        <div class="pageSub">Create and orchestrate intelligent data pipelines with AI agents</div>
+      </div>
+      <div class="topbar__right">
+        <div class="select">
+          <div class="select__label">Pipeline</div>
+          <select id="pipelineSelect">
+            <option value="Customer_360_Migration" selected>Customer_360_Migration</option>
+            <option value="Sales_Data_Pipeline">Sales_Data_Pipeline</option>
+            <option value="HR_Analytics_Pipeline">HR_Analytics_Pipeline</option>
+          </select>
+        </div>
+        <div class="pill">
+          <div class="pill__label">Run ID:</div>
+          <div class="pill__value" id="runIdPill">&mdash;</div>
+        </div>
+        <div class="statusPill" id="statusPill">
+          <span class="dot dot--blue"></span>
+          <span id="statusText">Status: Ready</span>
+        </div>
+        <button class="iconBtn" title="Notifications">&#128276;</button>
+        <!--<button class="iconBtn" title="Theme">&#9790;</button> Kani-->
+      </div>
+    </header>
+
+    <!-- KPI Row -->
+    <section class="kpis">
+      <div class="kpiCard">
+        <div class="kpiCard__top">
+          <div class="kpiIcon kpiIcon--blue">&#9096;</div>
+          <div class="kpiTitle">Pipelines</div>
+        </div>
+        <div class="kpiValue" id="kpiPipelines">32</div>
+        <div class="kpiDelta"><span class="deltaUp">&#8593; 12%</span> vs last 7 days</div>
+      </div>
+
+      <div class="kpiCard">
+        <div class="kpiCard__top">
+          <div class="kpiIcon kpiIcon--violet">&#9654;</div>
+          <div class="kpiTitle">Runs</div>
+        </div>
+        <div class="kpiValue" id="kpiRuns">86</div>
+        <div class="kpiDelta"><span class="deltaUp">&#8593; 18%</span> vs last 7 days</div>
+      </div>
+
+      <div class="kpiCard">
+        <div class="kpiCard__top">
+          <div class="kpiIcon kpiIcon--teal">&#10003;</div>
+          <div class="kpiTitle">Success Rate</div>
+        </div>
+        <div class="kpiValue" id="kpiSuccess">98.4%</div>
+        <div class="spark">
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <div class="kpiCard">
+        <div class="kpiCard__top">
+          <div class="kpiIcon kpiIcon--indigo">&#9638;</div>
+          <div class="kpiTitle">Artifacts Generated</div>
+        </div>
+        <div class="kpiValue" id="kpiArtifacts">214</div>
+        <div class="kpiDelta"><span class="deltaUp">&#8593; 25%</span> vs last 7 days</div>
+      </div>
+
+      <div class="kpiCard">
+        <div class="kpiCard__top">
+          <div class="kpiIcon kpiIcon--amber">&#9888;</div>
+          <div class="kpiTitle">Pending Approvals</div>
+        </div>
+        <div class="kpiValue" id="kpiApprovals">1</div>
+        <a class="kpiLink" href="#">View approvals &#8594;</a>
+      </div>
+
+      <div class="kpiCard">
+        <div class="kpiCard__top">
+          <div class="kpiIcon kpiIcon--cyan">&#129302;</div>
+          <div class="kpiTitle">Active Agents</div>
+        </div>
+        <div class="kpiValue"><span id="activeAgents">0</span> / 6</div>
+        <div class="kpiDelta" id="agentsState">Ready</div>
+      </div>
+    </section> 
+
+    <!-- AI Agent Journey -->
+    <section class="panel" style="margin-top:12px;">
+      <div class="panel__titleRow">
+        <div class="panel__title">AI Agent Journey</div>
+      </div>
+      <div class="journey" id="journey"></div>
+    </section>
+
+    <!-- User Story & Supporting Files -->
+    <section class="panel panel--blue" style="margin-top:12px;">
+      <div class="panel__titleRow">
+        <div class="panel__title">&#128203; User Story &amp; Supporting Files</div>
+        <div class="muted">Provide business requirements + upload schema/mapping files to guide agents</div>
+      </div>
+      <div class="inputsGrid">
+        <!-- Left: story textarea -->
+        <div>
+          <div class="field__label" style="margin-bottom:6px;">Business Requirements / User Story</div>
+          <textarea id="userStory" style="min-height:140px;"
+            placeholder="Describe the pipeline requirement: source systems, target, transformations, SLAs, compliance needs, etc..."></textarea>
+        </div>
+        <!-- Right: file upload -->
+        <div>
+          <div class="field__label" style="margin-bottom:6px;">Upload Supporting Files</div>
+          <div class="uploadBox">
+            <input id="supportFiles" type="file" multiple
+              accept=".xlsx,.xls,.csv,.json,.pdf,.doc,.docx,.yml,.yaml,.sql,.txt,.md"
+              style="color:var(--muted); font-size:12px; width:100%; background:transparent; border:none;" />
+            <div class="muted" style="margin-top:8px; line-height:1.6;">
+              Supported: Excel &middot; CSV &middot; JSON &middot; PDF &middot; Word &middot; YAML &middot; SQL &middot; Markdown
+            </div>
+            <div class="fileList" id="fileList" style="margin-top:10px;"></div>
+            <div class="btnRow" style="margin-top:12px; align-items:center;">
+              <button class="btn btn--primary" id="btnSaveInputs">&#128190; Save &amp; Attach Inputs</button>
+              <span class="muted" id="saveInputsMsg" style="margin-left:8px;"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lower 3-column grid -->
+    <section class="lowerGrid" style="margin-top:12px;">
+
+      <!-- Human Approval -->
+      <div class="panel panel--purple">
+        <div class="panel__titleRow">
+          <div class="panel__title">&#128100; Human Approval Required</div>
+        </div>
+        <div class="approvalStatus">
+          <span class="dot dot--green"></span>
+          <span id="approvalHeadline" style="font-weight:700; font-size:13px;">Agent 1 Completed</span>
+        </div>
+        <p class="muted" style="margin:6px 0 0;">
+          Please review the output below and approve to proceed to Agent 2.
+        </p>
+
+        <div class="summary">
+          <div class="summary__title">Summary</div>
+          <ul class="summaryList">
+            <li><span>Sources Discovered</span><b id="sumSources">3</b></li>
+            <li><span>Tables Detected</span><b id="sumTables">14</b></li>
+            <li><span>Columns Profiled</span><b id="sumColumns">127</b></li>
+            <li><span>Relationships Found</span><b id="sumRels">12</b></li>
+            <li><span>Data Quality Checks</span><b id="sumDQ">Completed</b></li>
+            <li><span>Lineage Generated</span><b id="sumLineage">Yes</b></li>
+          </ul>
+        </div>
+
+        <div class="field">
+          <div class="field__label">Comments (optional)</div>
+          <textarea id="approvalComment"
+            placeholder="Add your comments or feedback here..."></textarea>
+        </div>
+
+        <div class="btnRow">
+          <button class="btn btn--green" id="btnApprove">&#10003; Approve &amp; Continue</button>
+          <button class="btn btn--violet" id="btnRequest">&#9998; Request Changes</button>
+        </div>
+        <div class="btnRow btnRow--secondary">
+          <button class="btn btn--ghost" id="btnRegenerate">&#8635; Regenerate</button>
+          <button class="btn btn--danger" id="btnStop">&#9632; Stop Pipeline</button>
+        </div>
+      </div>
+
+      <!-- Real-time Artifact Generation -->
+      <div class="panel panel--blue">
+        <div class="panel__titleRow">
+          <div class="panel__title">&#126; Real-time Artifact Generation</div>
+          <div class="live"><span class="dot dot--green"></span> Live</div>
+        </div>
+
+        <div class="rtHeader">
+          <div class="rtTitle" id="rtTitle">Agent: &mdash;</div>
+          <span class="badge badge--blue" id="rtBadge">Ready</span>
+        </div>
+
+        <div class="logBox" id="logBox"></div>
+
+        <div class="progressRow">
+          <div class="progressBar">
+            <div class="progressBar__fill" id="progressFill" style="width:0%"></div>
+          </div>
+          <div class="progressPct" id="progressPct">0%</div>
+        </div>
+
+        <div class="subPanelTitle">
+          Generated Artifacts (<span id="artifactCountMini">0</span>)
+          <a class="kpiLink" href="#artifactSection" id="viewAllArtifacts">View All &#8595;</a>
+        </div>
+
+        <div class="artifactMiniGrid" id="artifactMiniGrid"></div>
+
+        <div class="actionRow" style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
+          <button class="btn btn--primary" id="btnRunPhase1">&#9654; Run Phase 1</button>
+          <button class="btn btn--primary" id="btnRunPhase2">&#9193; Continue Phase 2</button>
+          <button class="btn btn--ghost" id="btnRunAll">&#9881; Run Full Pipeline</button>
+        </div>
+      </div>
+
+      <!-- Pipeline Summary -->
+      <div class="panel panel--slate">
+        <div class="panel__title">&#9635; Pipeline Summary</div>
+
+        <div class="infoBlock" style="margin-top:8px;">
+          <div class="infoTitle">Overall Progress</div>
+        </div>
+
+        <div class="radialWrap">
+          <div class="radial" id="radial" style="--pct:0">
+            <div class="radial__inner">
+              <div class="radial__pct" id="radialPct">0%</div>
+              <div class="radial__sub" id="radialSub">Ready</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="infoBlock">
+          <div class="infoTitle">Run Information</div>
+          <div class="infoGrid">
+            <div><span>Pipeline Name</span><b id="infoPipeline">Customer_360_Migration</b></div>
+            <div><span>Run ID</span><b id="infoRunId">&mdash;</b></div>
+            <div><span>Triggered By</span><b id="infoUser">Kanimozhi Sankar</b></div>
+            <div><span>Start Time</span><b id="infoStart">&mdash;</b></div>
+            <div><span>Current Agent</span><b id="infoAgent">&mdash;</b></div>
+            <div><span>Duration</span><b id="infoDuration">&mdash;</b></div>
+          </div>
+        </div>
+
+        <div class="infoBlock">
+          <div class="infoTitleRow">
+            <div class="infoTitle">Recent Runs</div>
+            <a class="kpiLink" href="#">View All</a>
+          </div>
+          <div class="recentRuns" id="recentRuns"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Generated Artifacts (full grid) -->
+    <section class="panel" style="margin-top:12px;" id="artifactSection">
+      <div class="panel__titleRow">
+        <div class="panel__title">&#9638; Generated Artifacts</div>
+        <div class="muted" id="artifactSectionMeta">Artifacts will appear here after pipeline runs.</div>
+      </div>
+      <div class="artifactGrid" id="artifactGrid"></div>
+    </section>
+
+    <div class="footerSpace"></div>
+  </main><!-- /.main -->
+</div><!-- /.app -->
+
+<!-- ═══════════════════════════════════════════
+     ARTIFACT PREVIEW MODAL
+═══════════════════════════════════════════ -->
+<div id="previewModal" style="
+  display:none; position:fixed; inset:0; z-index:9999;
+  background:rgba(5,8,20,.88);
+  align-items:flex-start; justify-content:center;
+  padding-top:60px;">
+  <div style="
+    background:linear-gradient(180deg,rgba(10,16,34,.99),rgba(7,10,20,.97));
+    border:1px solid rgba(43,131,255,.25);
+    border-radius:18px;
+    width:min(900px,94vw);
+    max-height:80vh;
+    display:flex; flex-direction:column;
+    box-shadow:0 40px 100px rgba(0,0,0,.6);">
+
+    <!-- Modal Header -->
+    <div style="
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 20px;
+      border-bottom:1px solid rgba(255,255,255,.07);">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span id="previewIcon" style="font-size:20px;">&#9638;</span>
+        <div>
+          <div style="font-weight:750; font-size:14px;" id="previewTitle">Preview</div>
+          <div style="font-size:11px; color:var(--muted);" id="previewMeta"></div>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <button id="previewDownloadBtn" style="
+          background:rgba(43,131,255,.14);
+          border:1px solid rgba(43,131,255,.26);
+          color:var(--text); border-radius:10px;
+          padding:8px 14px; cursor:pointer; font-size:12px; font-weight:700;">
+          &#11015; Download
+        </button>
+        <button id="previewClose" style="
+          background:rgba(255,255,255,.06);
+          border:1px solid rgba(255,255,255,.10);
+          color:var(--text); border-radius:10px;
+          padding:8px 14px; cursor:pointer; font-size:12px;">
+          &#10005; Close
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal Body -->
+    <pre id="previewBody" style="
+      flex:1; overflow:auto; margin:0;
+      padding:18px 20px;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      font-size:12px; line-height:1.7;
+      color:rgba(231,236,255,.92);
+      white-space:pre-wrap; word-break:break-all;
+      background:rgba(7,10,20,.55);
+      border-radius:0 0 18px 18px;">Loading...</pre>
+  </div>
+</div>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>
