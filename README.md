@@ -1,12 +1,12 @@
-# FlowCraft AI - Intelligent ETL/ELT Pipeline Builder
+# DataOps Copilot - Intelligent ETL/ELT Pipeline Builder
 
-**FlowCraft AI** is an AI-powered ETL/ELT pipeline builder that automatically generates production-ready data pipelines for Databricks and Delta Lake. Using a multi-agent orchestration system, it transforms business requirements into fully-configured, deployable infrastructure with Databricks Asset Bundles (DAB) and GitHub Actions CI/CD workflows.
+**DataOps Copilot** is an AI-powered ETL/ELT pipeline builder that automatically generates production-ready data pipelines for Databricks and Delta Lake. Using a multi-agent orchestration system, it transforms business requirements into fully-configured, deployable infrastructure with Databricks Asset Bundles (DAB) and GitHub Actions CI/CD workflows.
 
 ---
 
 ## 🎯 Overview
 
-FlowCraft AI solves the complex problem of manually designing and coding ETL/ELT pipelines by leveraging AI agents to:
+DataOps Copilot solves the complex problem of manually designing and coding ETL/ELT pipelines by leveraging AI agents to:
 
 - **Discover** data sources and profile datasets
 - **Detect** schema drift and data quality issues
@@ -245,7 +245,7 @@ Allows human approval between phases:
 
 ## 📦 Generated Artifacts
 
-FlowCraft AI outputs production-ready configurations in the `generated/runs/{run_id}/` directory:
+DataOps Copilot outputs production-ready configurations in the `generated/runs/{run_id}/` directory:
 
 ```
 generated/runs/{run_id}/
@@ -372,7 +372,7 @@ The web UI (`app/templates/index.html`) is a single-page application (SPA) with:
 
 ## 📄 License
 
-This project is part of the FlowCraft AI initiative. Check LICENSE file for details.
+This project is part of the DataOps Copilot initiative. Check LICENSE file for details.
 
 ---
 
