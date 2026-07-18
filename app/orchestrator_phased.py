@@ -9,8 +9,8 @@ from .artifact_writer import (
     write_dab_databricks_yml, write_dab_jobs_yml, write_github_actions_bundle_workflow
 )
 
-PHASE1 = ["source_discovery","schema_drift","transformation"]
-PHASE2 = ["trust_quality", "deployment","refinement"]
+PHASE1 = ["refinement","source_discovery","schema_drift"]
+PHASE2 = ["transformation","trust_quality", "deployment"]
 
 def load_agent_prompt(agent_name: str) -> str:
     return (Path(__file__).parent / "agents" / f"{agent_name}.agent.md").read_text(encoding="utf-8")

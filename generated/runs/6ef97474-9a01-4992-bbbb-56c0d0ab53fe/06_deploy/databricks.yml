@@ -1,0 +1,11 @@
+bundle:
+  name: ai_etl_6ef97474
+
+include:
+  - resources/*.yml
+
+targets:
+  dev:
+    default: true
+  prod:
+    mode: production

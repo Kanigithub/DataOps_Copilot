@@ -1,0 +1,18 @@
+resources:
+  jobs:
+    ai_etl_pipeline_6ef97474:
+      name: "AI-ETL Pipeline (6ef97474)"
+      tasks:
+        - task_key: "run_pipeline_notebook"
+          notebook_task:
+            notebook_path: "generated_pipeline/notebooks/pipeline_transform"
+          # Optional: if using SQL Warehouse for %sql commands in notebooks, configure via cluster or warehouse task.
+          # For simplicity we run on a job cluster:
+          job_cluster_key: "etl_job_cluster"
+
+      job_clusters:
+        - job_cluster_key: "etl_job_cluster"
+          new_cluster:
+            spark_version: "15.4.x-scala2.12"
+            node_type_id: "i3.xlarge"
+            num_workers: 1

@@ -1,0 +1,41 @@
+- Goal & promotion flow: build a Databricks Delta ELT (Bronze → Silver → Gold) with audit/lineage, schema‑drift detection/rules, PII handling, promotion gates; CI flow: PR → CI tests → deploy/run in dev (smoke) → auto deploy to test → manual approval → gated prod deploy (Quality Check Plan). Use Databricks Asset Bundle (DAB) via dbx/databricks-cli + GitHub Actions for build/deploy.
+
+- Environments & infra requirements: dev/test/prod each have their own Databricks workspace (or UC catalog/schemas), secret scope, storage paths and Terraform-managed infra. Required artifacts: cloud storage buckets, Unity Catalog catalog/schemas, databricks_secret_scope (backed by cloud KMS), CI service principal/token, Terraform state backend, PagerDuty/Slack alert endpoints.
+
+- CI/CD stages & tooling: GitHub Actions workflows: PR checks (lint/pytest/nbqa/sqlfluff + small integration smoke job on dev); Build & publish DAB (dbx); Deploy stage (terraform plan/apply → deploy DAB → run smoke jobs → validate metrics → persist deploy audit/lineage); Prod promotion requires manual approval and full Quality Check Plan run. Use databricks/databricks-action@v2 for auth; enforce GitHub Environments approvals for production.
+
+- IaC surface (Terraform placeholders): manage secret scopes, storage buckets (raw/{env}/gl_transactions/bronze, refined/{env}/gl_transaction_clean, curated/{env}/gold), UC catalog gl_catalog and schemas (meta, raw, refined, curated), CI service principal, Databricks job definitions (notebook_task + cluster spec), and DDL for meta tables. Job JSONs parametrize env/run_id/git_commit.
+
+- Meta (audit/metrics/lineage) schemas (Delta tables; create per env/UC meta schema). Key tables:
+  - meta.ingest_audit (e.g., schema_json STRING, schema_hash STRING, job_run_id STRING, ts TIMESTAMP, git_commit STRING, env STRING)
+  - meta.column_mapping (mapping candidates & approvals)
+  - meta.drift_events (type ADD/DROP/RENAME/DATATYPE_WIDEN, confidence, details)
+  - meta.data_metrics (rows_in, histograms, pii_findings)
+  - meta.quarantine_gl_transactions (row_id, error_code, reason)
+  - meta.lineage (input_table_versions, job_run_id, git_commit)
+  - meta.pii_token_map (tokenized_value, original_hmac? managed via secret)
+  (All stored USING DELTA; persisted on ingest/transform/promote.)
+
+- Notebook responsibilities & key implementation decisions:
+  - 01_ingest_bronze: read CSV/Parquet/Delta, append to Delta with mergeSchema=true, partition by ingestion_date, compute schema_json + schema_hash → write meta.ingest_audit, emit ingest metrics, run PII detector and store findings in meta.data_metrics.
+  - 02_transform_silver: load bronze (time-travelable), diff schema vs meta → write meta.drift_events, auto-apply renames only if mapping_confidence ≥ 0.9 (configurable); canonicalize columns (synthesize transaction_id if missing), normalize signed_amount, COA normalization (left join to central COA table), quarantine invalid rows into meta.quarantine_gl_transactions, dedupe via business key and MERGE into refined.gl_transaction_clean (idempotent MERGE pattern), write meta.lineage and metrics.
+  - 03_gold_marts: run only if trust_score/data quality checks pass; produce curated.gl_balance_daily, gl_variance_monthly, gl_exceptions; persist provenance in meta.lineage.
+
+- Drift & mapping rules (decision rules):
+  - Persist schema_json & hash on ingest; schema diffs produce meta.drift_events with confidence.
+  - ADD columns: auto-apply to bronze (mergeSchema) if confidence ≥ mapping_auto_apply_confidence (default 0.9) and non-PII; otherwise create column_mapping candidate for manual approval.
+  - RENAME: auto-apply only if confidence ≥ 0.9; otherwise require manual mapping entry.
+  - DATATYPE_WIDEN allowed (log event); DROP/RENAME require human review if confidence < threshold.
+  - All drift events and mapping decisions recorded in meta.* and surface as CI/CD gates for promotion.
+
+- Quality gates & thresholds (enforced before prod deploy; configurable in config/{env}.yaml):
+  - Unit tests & data tests pass; integration smoke success in dev.
+  - posting_date window: max age = 7 years (min offset), future tolerance = 31 days.
+  - duplicate_rate_threshold = 0.001 (0.1%); missing_coa_threshold = 0.005 (0.5%).
+  - mapping_auto_apply_confidence = 0.9.
+  - percent_quarantined_warn = 0.01; percent_quarantined_action = 0.05 (abort and block promotion).
+  - If any gate fails: write audit row(s) to meta.ingest_audit/meta.metrics and block promotion until resolved.
+
+- PII & secrets handling: run PII detector during ingest (regex + ML heuristics), persist findings to meta.data_metrics; tokenization/HMAC performed using secret env_hmac_secret stored in databricks_secret_scope; CI uses service principal token from secret scope. Secret scopes must be managed in IaC.
+
+- Operational/config requirements & cluster guidance: repo config per env (config/{env}.yaml) containing storage paths, catalog/schema names, thresholds, retention, job concurrency, and git repo path; notebooks must be parameterized (widgets/env vars: env, run_id, git_commit, dry_run, mapping_override_id). Production clusters should use instance pools, autoscaling, Delta-optimized instance types, terminate idle clusters; job clusters defined in Terraform job JSONs.

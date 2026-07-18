@@ -13,7 +13,7 @@ from .artifact_writer import (
     write_github_actions_bundle_workflow,
 )
 
-AGENT_ORDER = ["source_discovery","schema_drift","transformation","trust_quality","deployment","refinement"]
+AGENT_ORDER = ["refinement","source_discovery","schema_drift","transformation","trust_quality","deployment"]
 
 def load_agent_prompt(agent_name: str) -> str:
     return (Path(__file__).parent / "agents" / f"{agent_name}.agent.md").read_text(encoding="utf-8")

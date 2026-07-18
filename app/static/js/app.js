@@ -13,12 +13,12 @@ const state = {
 };
 
 const AGENTS = [
-  { key: "refinement",       idx: 1, title: "Schema Discovery & Extraction",           icon: "🔎" },
-  { key: "source_discovery", idx: 2, title: "Transformation Notebooks / Scripts",       icon: "⚙️" },
-  { key: "schema_drift",     idx: 3, title: "Data & Schema Migration Assistant",        icon: "🔁" },
-  { key: "transformation",   idx: 4, title: "AI Suggestions & Code Scaffolding",        icon: "💡" },
-  { key: "trust_quality",    idx: 5, title: "Deployment + CI/CD Auto-Gen (and infra)",  icon: "☁️" },
-  { key: "deployment",       idx: 6, title: "Iterative Refinement via Prompts",         icon: "🔄" },
+  { key: "refinement",       idx: 1, title: "Iterative Refinement via Prompts",           icon: "🔄" },
+  { key: "source_discovery", idx: 2, title: "Schema Discovery & Extraction",       icon: "🔎" },
+  { key: "schema_drift",     idx: 3, title: "Data & Schema Migration Assistant",        icon: "⚙️" },
+  { key: "transformation",   idx: 4, title: "Transformation Notebooks / Scripts",        icon: "🔁" },
+  { key: "trust_quality",    idx: 5, title: "AI Suggestions & Code Scaffolding",  icon: "💡" },
+  { key: "deployment",       idx: 6, title: "Deployment + CI/CD Auto-Gen (and infra)",         icon: "☁️" },
 ];
 const AGENT_BY_KEY = Object.fromEntries(AGENTS.map(a => [a.key, a]));
 
@@ -360,7 +360,7 @@ function buildPayload() {
 /* ─── Run Phase 1 ─── */
 async function runPhase1() {
   clearLog();
-  pushLog("[UI] Starting Phase 1 (Source Discovery + Schema Drift + Transformation)...");
+  pushLog("[UI] Starting Phase 1 (Refinement + Source Discovery + Schema Drift)...");
   setStatus("info", "Status: In Progress"); setBadge("info", "In Progress");
   state.startTime = new Date().toISOString();
   state.lastOutputLen = 0;
@@ -380,7 +380,7 @@ async function runPhase1() {
 /* ─── Run Phase 2 ─── */
 async function runPhase2() {
   if (!state.runId) { pushLog("[UI] No run_id — run Phase 1 first."); return; }
-  pushLog("[UI] Continuing Phase 2 (Trust Quality → Deployment + Refinement)...");
+  pushLog("[UI] Continuing Phase 2 (Transformation + Trust Quality → Deployment )...");
   setBadge("info", "In Progress"); startDuration();
   const resp = await apiPost(`/api/run_phase2/${state.runId}`, buildPayload());
   pushLog(`[UI] Phase 2 complete. Artifacts: ${(resp.artifacts_written || []).length}`);

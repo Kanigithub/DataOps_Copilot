@@ -18,7 +18,7 @@
 
 # BASE_DIR = Path(__file__).resolve().parent
 
-# app = FastAPI(title="FlowCraft AI - ETL/ELT Builder")
+# app = FastAPI(title="DataOps Copilot - ETL/ELT Builder")
 
 # # ---- Templates: disable cache to avoid your previous Jinja cache corruption
 # jinja_env = Environment(
@@ -229,7 +229,7 @@ ALLOWED_EXTS = {".xlsx", ".xls", ".csv", ".json", ".pdf", ".doc", ".docx", ".yml
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 templates.env.cache = {}  # prevents: cannot use 'tuple' as a dict key
 
-app = FastAPI(title="FlowCraft AI")
+app = FastAPI(title="DataOps Copilot")
 
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
