@@ -32,7 +32,7 @@ The system is designed for **data engineers, architects, and platform teams** wh
 ### Project Structure
 
 ```
-FlowCraft_AI_Codieme/
+DataOps_Copilot/
 ├── app/                              # Main application package
 │   ├── main.py                       # FastAPI server, HTTP endpoints
 │   ├── orchestrator.py               # Full pipeline orchestration (6 agents)
@@ -105,8 +105,8 @@ FlowCraft_AI_Codieme/
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/Kanigithub/FlowCraft_AI_Codieme.git
-   cd FlowCraft_AI_Codieme
+   git clone https://github.com/Kanigithub/DataOps_Copilot.git
+   cd DataOps_Copilot
    ```
 
 2. **Install dependencies:**
