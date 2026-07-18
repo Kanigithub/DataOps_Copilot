@@ -212,34 +212,34 @@ curl http://localhost:8000/api/dial_ping
 Each agent is a specialized LLM task with a dedicated prompt file. Agents run sequentially, with outputs from previous agents informing subsequent decisions.
 
 ### Agent Order (Full Pipeline)
-1. **Source Discovery** (`source_discovery.agent.md`)
-   - Identifies data sources, lineage, table structures
-   - Output: source inventory, table schemas
-
-2. **Schema Drift** (`schema_drift.agent.md`)
-   - Detects breaking changes, evolution patterns
-   - Output: drift rules, migration strategies
-
-3. **Transformation** (`transformation.agent.md`)
-   - Generates Python/SQL code for ETL logic
-   - Output: transformation logic, code blocks (fenced in Markdown)
-
-4. **Trust & Quality** (`trust_quality.agent.md`)
-   - Defines data quality checks, validation rules
-   - Output: DQ checks, anomaly detection
-
-5. **Deployment** (`deployment.agent.md`)
-   - Generates DAB config, GitHub Actions workflow
-   - Output: `databricks.yml`, `jobs.yml`, GitHub workflow
-
-6. **Refinement** (`refinement.agent.md`)
+1. **Refinement** (`refinement.agent.md`)
    - Optimization suggestions, feedback incorporation
    - Output: refinement notes, next steps
 
+2. **Source Discovery** (`source_discovery.agent.md`)
+   - Identifies data sources, lineage, table structures
+   - Output: source inventory, table schemas
+
+3. **Schema Drift** (`schema_drift.agent.md`)
+   - Detects breaking changes, evolution patterns
+   - Output: drift rules, migration strategies
+
+4. **Transformation** (`transformation.agent.md`)
+   - Generates Python/SQL code for ETL logic
+   - Output: transformation logic, code blocks (fenced in Markdown)
+
+5. **Trust & Quality** (`trust_quality.agent.md`)
+   - Defines data quality checks, validation rules
+   - Output: DQ checks, anomaly detection
+
+6. **Deployment** (`deployment.agent.md`)
+   - Generates DAB config, GitHub Actions workflow
+   - Output: `databricks.yml`, `jobs.yml`, GitHub workflow
+
 ### Two-Phase Mode
 Allows human approval between phases:
-- **Phase 1:** source_discovery → schema_drift → transformation
-- **Phase 2:** trust_quality → deployment → refinement
+- **Phase 1:** refinement → source_discovery → schema_drift
+- **Phase 2:** transformation → trust_quality → deployment 
 
 ---
 
@@ -249,12 +249,12 @@ FlowCraft AI outputs production-ready configurations in the `generated/runs/{run
 
 ```
 generated/runs/{run_id}/
-├── 01_source_discovery.md                 # Agent output
-├── 02_schema_drift.md
-├── 03_transformation.md
-├── 04_trust_quality.md
-├── 05_deployment.md
-├── 06_refinement.md
+├── 01_refinement.md                 # Agent output
+├── 02_source_discovery.md
+├── 03_schema_drift.md
+├── 04_transformation.md
+├── 05_trust_quality.md
+├── 06_deployment.md
 │
 ├── 04_transform/
 │   ├── notebooks/
@@ -288,18 +288,6 @@ DIAL_ENDPOINT=https://ai-proxy.lab.epam.com
 DIAL_API_VERSION=2025-04-01-preview
 DIAL_DEPLOYMENT=gpt-5-mini-2025-08-07
 
-# Optional: Direct OpenAI
-# OPENAI_API_KEY=sk-xxx...
-# OPENAI_MODEL=gpt-4o-mini
-
-# Optional: Ollama (local LLM)
-# OLLAMA_URL=http://127.0.0.1:11434
-# OLLAMA_MODEL=llama3.1:8b
-
-# Optional: Atlassian Jira integration
-# ATLASSIAN_BASE_URL=https://your-domain.atlassian.net
-# ATLASSIAN_EMAIL=user@example.com
-# ATLASSIAN_API_TOKEN=xxx...
 ```
 
 ### Supported File Types for Upload
